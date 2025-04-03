@@ -23,7 +23,7 @@ services:
     image: postgres
     restart: always
     shm_size: 128mb
-    expose:
+    ports:
       - 5432:5432
     environment:
       POSTGRES_USER: postgres
