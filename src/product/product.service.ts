@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ProdutoDto } from './produto.dto';
+import { ProductDto } from './product.dto';
 
 @Injectable()
-export class ProdutoService {
+export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: ProdutoDto) {
+  async create(data: ProductDto) {
     return this.prisma.produto.create({ data });
   }
 
@@ -20,10 +20,11 @@ export class ProdutoService {
     return produto;
   }
 
-  async update(id: string, data: Partial<ProdutoDto>) {
+  async update(id: string, data: Partial<ProductDto>) {
     const produtoExistente = await this.prisma.produto.findUnique({
       where: { id },
     });
+
     if (!produtoExistente)
       throw new NotFoundException('Produto não encontrado.');
 

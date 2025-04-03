@@ -1,107 +1,107 @@
 -- CreateEnum
-CREATE TYPE "MovimentacaoTipo" AS ENUM ('ENTRADA', 'SAIDA', 'AJUSTE');
+CREATE TYPE "MovementType" AS ENUM ('IN', 'OUT', 'ADJUSTMENT');
 
 -- CreateTable
-CREATE TABLE "Produto" (
+CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
-    "nome" TEXT NOT NULL,
-    "descricao" TEXT,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
     "sku" TEXT NOT NULL,
-    "codigoBarras" TEXT,
-    "codigoEAM" TEXT NOT NULL,
-    "unidade" TEXT NOT NULL,
-    "categoriaId" TEXT NOT NULL,
-    "estoqueMinimo" INTEGER NOT NULL DEFAULT 0,
-    "estoqueMaximo" INTEGER,
-    "precoCusto" DOUBLE PRECISION NOT NULL,
-    "precoVenda" DOUBLE PRECISION NOT NULL,
-    "precoPromocao" DOUBLE PRECISION,
-    "precoPromocaoValidoAte" TIMESTAMP(3),
-    "precoPromocaoAtivo" BOOLEAN NOT NULL DEFAULT false,
-    "ativo" BOOLEAN NOT NULL DEFAULT true,
+    "barcode" TEXT,
+    "eamCode" TEXT NOT NULL,
+    "unit" TEXT NOT NULL,
+    "categoryId" TEXT NOT NULL,
+    "minimumStock" INTEGER NOT NULL DEFAULT 0,
+    "maximumStock" INTEGER,
+    "costPrice" DOUBLE PRECISION NOT NULL,
+    "salePrice" DOUBLE PRECISION NOT NULL,
+    "promotionalPrice" DOUBLE PRECISION,
+    "promotionalPriceValidUntil" TIMESTAMP(3),
+    "promotionalPriceActive" BOOLEAN NOT NULL DEFAULT false,
+    "active" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "localizacao" TEXT,
-    "dataFabricacao" TIMESTAMP(3),
-    "dataValidade" TIMESTAMP(3),
-    "peso" DOUBLE PRECISION,
-    "altura" DOUBLE PRECISION,
-    "largura" DOUBLE PRECISION,
-    "profundidade" DOUBLE PRECISION,
-
-    CONSTRAINT "Produto_pkey" PRIMARY KEY ("id")
+    "location" TEXT,
+    "manufacturingDate" TIMESTAMP(3),
+    "expirationDate" TIMESTAMP(3),
+    "weight" DOUBLE PRECISION,
+    "height" DOUBLE PRECISION,
+    "width" DOUBLE PRECISION,
+    "depth" DOUBLE PRECISION,
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Categoria" (
+CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
-    "nome" TEXT NOT NULL,
-
-    CONSTRAINT "Categoria_pkey" PRIMARY KEY ("id")
+    "name" TEXT NOT NULL,
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Fornecedor" (
+CREATE TABLE "Supplier" (
     "id" TEXT NOT NULL,
-    "nome" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "cnpj" TEXT,
-    "telefone" TEXT,
+    "phone" TEXT,
     "email" TEXT,
-    "endereco" TEXT,
+    "address" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Fornecedor_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Supplier_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "ProdutoFornecedor" (
+CREATE TABLE "ProductSupplier" (
     "id" TEXT NOT NULL,
-    "produtoId" TEXT NOT NULL,
-    "fornecedorId" TEXT NOT NULL,
-    "precoCompra" DOUBLE PRECISION,
-
-    CONSTRAINT "ProdutoFornecedor_pkey" PRIMARY KEY ("id")
+    "productId" TEXT NOT NULL,
+    "supplierId" TEXT NOT NULL,
+    "purchasePrice" DOUBLE PRECISION,
+    CONSTRAINT "ProductSupplier_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Movimentacao" (
+CREATE TABLE "Movement" (
     "id" TEXT NOT NULL,
-    "tipo" "MovimentacaoTipo" NOT NULL,
-    "quantidade" INTEGER NOT NULL,
-    "produtoId" TEXT NOT NULL,
-    "fornecedorId" TEXT,
+    "type" "MovementType" NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
+    "supplierId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Movimentacao_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Movement_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Produto_sku_key" ON "Produto"("sku");
+CREATE UNIQUE INDEX "Product_sku_key" ON "Product" ("sku");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Produto_codigoBarras_key" ON "Produto"("codigoBarras");
+CREATE UNIQUE INDEX "Product_barcode_key" ON "Product" ("barcode");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Produto_codigoEAM_key" ON "Produto"("codigoEAM");
+CREATE UNIQUE INDEX "Product_eamCode_key" ON "Product" ("eamCode");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Fornecedor_cnpj_key" ON "Fornecedor"("cnpj");
+CREATE UNIQUE INDEX "Supplier_cnpj_key" ON "Supplier" ("cnpj");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Fornecedor_email_key" ON "Fornecedor"("email");
+CREATE UNIQUE INDEX "Supplier_email_key" ON "Supplier" ("email");
 
 -- AddForeignKey
-ALTER TABLE "Produto" ADD CONSTRAINT "Produto_categoriaId_fkey" FOREIGN KEY ("categoriaId") REFERENCES "Categoria"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Product"
+ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProdutoFornecedor" ADD CONSTRAINT "ProdutoFornecedor_produtoId_fkey" FOREIGN KEY ("produtoId") REFERENCES "Produto"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProductSupplier"
+ADD CONSTRAINT "ProductSupplier_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProdutoFornecedor" ADD CONSTRAINT "ProdutoFornecedor_fornecedorId_fkey" FOREIGN KEY ("fornecedorId") REFERENCES "Fornecedor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProductSupplier"
+ADD CONSTRAINT "ProductSupplier_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Movimentacao" ADD CONSTRAINT "Movimentacao_produtoId_fkey" FOREIGN KEY ("produtoId") REFERENCES "Produto"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Movement"
+ADD CONSTRAINT "Movement_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Movimentacao" ADD CONSTRAINT "Movimentacao_fornecedorId_fkey" FOREIGN KEY ("fornecedorId") REFERENCES "Fornecedor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Movement"
+ADD CONSTRAINT "Movement_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier" ("id") ON DELETE SET NULL ON UPDATE CASCADE;

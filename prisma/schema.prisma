@@ -7,88 +7,87 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Produto {
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  sku         String   @unique
+  barcode     String?  @unique
+  eamCode     String   @unique
+  unit        String
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  minimumStock               Int       @default(0)
+  maximumStock               Int?
+  costPrice                  Float
+  salePrice                  Float
+  promotionalPrice           Float?
+  promotionalPriceValidUntil DateTime?
+  promotionalPriceActive     Boolean   @default(false)
+
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  location String?
+
+  productSuppliers ProductSupplier[]
+
+  manufacturingDate DateTime?
+  expirationDate    DateTime?
+
+  weight Float?
+  height Float?
+  width  Float?
+  depth  Float?
+
+  Movements Movement[]
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String
+  products Product[]
+}
+
+model Supplier {
+  id        String   @id @default(uuid())
+  name      String
+  cnpj      String?  @unique
+  phone     String?
+  email     String?  @unique
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Movements Movement[]
+
+  ProductSupplier ProductSupplier[]
+}
+
+model ProductSupplier {
   id            String   @id @default(uuid())
-  nome          String
-  descricao     String?
-  sku           String   @unique
-  codigoBarras  String?  @unique
-  codigoEAM     String   @unique
-  unidade       String   
-  categoriaId   String
-  categoria     Categoria @relation(fields: [categoriaId], references: [id])
-  
-  estoqueMinimo Int      @default(0)
-  estoqueMaximo Int?
-  precoCusto    Float
-  precoVenda    Float
-  precoPromocao Float?
-  precoPromocaoValidoAte DateTime?
-  precoPromocaoAtivo Boolean @default(false)
-  
-  ativo         Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  localizacao   String?  
-
-  ProdutoFornecedores ProdutoFornecedor[]
-
-  dataFabricacao DateTime?
-  dataValidade   DateTime?
-
-  peso         Float?  
-  altura       Float?  
-  largura      Float?  
-  profundidade Float?  
-
-  Movimentacoes Movimentacao[]
+  productId     String
+  supplierId    String
+  purchasePrice Float?
+  product       Product  @relation(fields: [productId], references: [id])
+  supplier      Supplier @relation(fields: [supplierId], references: [id])
 }
 
-
-model Categoria {
-  id        String    @id @default(uuid())
-  nome      String
-  produtos  Produto[]
+model Movement {
+  id         String       @id @default(uuid())
+  type       MovementType
+  quantity   Int
+  productId  String
+  product    Product      @relation(fields: [productId], references: [id])
+  supplierId String?
+  supplier   Supplier?    @relation(fields: [supplierId], references: [id])
+  createdAt  DateTime     @default(now())
 }
 
-model Fornecedor {
-  id        String    @id @default(uuid())
-  nome      String
-  cnpj      String?   @unique
-  telefone  String?
-  email     String?   @unique
-  endereco  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  Movimentacao Movimentacao[]
-
-  ProdutoFornecedor ProdutoFornecedor[]
-}
-
-model ProdutoFornecedor {
-  id           String   @id @default(uuid())
-  produtoId    String
-  fornecedorId String
-  precoCompra  Float?
-  produto      Produto @relation(fields: [produtoId], references: [id])
-  fornecedor   Fornecedor @relation(fields: [fornecedorId], references: [id])
-}
-
-model Movimentacao {
-  id          String    @id @default(uuid())
-  tipo        MovimentacaoTipo
-  quantidade  Int
-  produtoId   String
-  produto     Produto   @relation(fields: [produtoId], references: [id])
-  fornecedorId String?  
-  fornecedor   Fornecedor? @relation(fields: [fornecedorId], references: [id])
-  createdAt   DateTime  @default(now())
-}
-
-enum MovimentacaoTipo {
-  ENTRADA
-  SAIDA
-  AJUSTE
+enum MovementType {
+  IN
+  OUT
+  ADJUSTMENT
 }

@@ -7,21 +7,21 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
-import { ProdutoService } from './produto.service';
-import { ProdutoDto } from './produto.dto';
+import { ProductService } from './product.service';
+import { ProductDto } from './product.dto';
 
-@Controller('produto')
+@Controller('product')
 export class ProdutoController {
-  constructor(private readonly produtoService: ProdutoService) {}
+  constructor(private readonly produtoService: ProductService) {}
 
   @Post()
-  async criar(@Body() data: ProdutoDto) {
+  async createProductBase(@Body() data: ProductDto) {
     const produto = await this.produtoService.create(data);
     return { message: 'Produto criado com sucesso!', produto };
   }
 
   @Get()
-  async listarTodos() {
+  async listProducts() {
     const produtos = await this.produtoService.findAll();
     return { message: 'Lista de produtos carregada com sucesso!', produtos };
   }
@@ -33,13 +33,16 @@ export class ProdutoController {
   }
 
   @Patch(':id')
-  async atualizar(@Param('id') id: string, @Body() data: Partial<ProdutoDto>) {
+  async update(
+    @Param('id') id: string,
+    @Body() data: Partial<ProductDto>,
+  ) {
     const produto = await this.produtoService.update(id, data);
     return { message: 'Produto atualizado com sucesso!', produto };
   }
 
   @Delete(':id')
-  async deletar(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     await this.produtoService.delete(id);
     return { message: 'Produto deletado com sucesso!' };
   }

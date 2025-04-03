@@ -7,54 +7,54 @@ import {
   IsDateString,
 } from 'class-validator';
 
-export class ProdutoDto {
+export class ProductDto {
   @IsString()
-  nome: string;
+  name: string;
 
   @IsOptional()
   @IsString()
-  descricao?: string;
+  description?: string;
 
   @IsString()
   sku: string;
 
   @IsOptional()
   @IsString()
-  codigoBarras?: string;
+  barcode?: string;
 
   @IsString()
-  codigoEAM: string;
+  eamCode: string;
 
   @IsString()
-  unidade: string;
+  unit: string;
 
   @IsUUID()
-  categoriaId: string;
+  categoryId: string;
 
   @IsNumber()
-  estoqueMinimo: number;
-
-  @IsOptional()
-  @IsNumber()
-  estoqueMaximo?: number;
-
-  @IsNumber()
-  precoCusto: number;
-
-  @IsNumber()
-  precoVenda: number;
+  minimumStock: number;
 
   @IsOptional()
   @IsNumber()
-  precoPromocao?: number;
+  maximumStock?: number;
+
+  @IsNumber()
+  costPrice: number;
+
+  @IsNumber()
+  salePrice: number;
+
+  @IsOptional()
+  @IsNumber()
+  promotionalPrice?: number;
 
   @IsOptional()
   @IsDateString()
-  precoPromocaoValidoAte?: Date;
+  promotionalPriceValidUntil?: Date;
 
   @IsBoolean()
-  precoPromocaoAtivo: boolean;
+  promotionalPriceActive: boolean;
 
   @IsBoolean()
-  ativo: boolean;
+  active: boolean;
 }
