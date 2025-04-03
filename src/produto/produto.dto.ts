@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsNumber, IsBoolean, IsUUID, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsUUID,
+  IsDateString,
+} from 'class-validator';
 
 export class ProdutoDto {
   @IsString()
