@@ -11,7 +11,7 @@ import { ProductService } from './product.service';
 import { ProductDto } from './product.dto';
 
 @Controller('product')
-export class ProdutoController {
+export class ProductController {
   constructor(private readonly produtoService: ProductService) {}
 
   @Post()
