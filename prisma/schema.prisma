@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Produto {
+  id            String   @id @default(uuid())
+  nome          String
+  descricao     String?
+  sku           String   @unique
+  codigoBarras  String?  @unique
+  codigoEAM     String   @unique
+  unidade       String   
+  categoriaId   String
+  categoria     Categoria @relation(fields: [categoriaId], references: [id])
+  
+  estoqueMinimo Int      @default(0)
+  estoqueMaximo Int?
+  precoCusto    Float
+  precoVenda    Float
+  precoPromocao Float?
+  precoPromocaoValidoAte DateTime?
+  precoPromocaoAtivo Boolean @default(false)
+  
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  localizacao   String?  
+
+  ProdutoFornecedores ProdutoFornecedor[]
+
+  dataFabricacao DateTime?
+  dataValidade   DateTime?
+
+  peso         Float?  
+  altura       Float?  
+  largura      Float?  
+  profundidade Float?  
+
+  Movimentacoes Movimentacao[]
+}
+
+
+model Categoria {
+  id        String    @id @default(uuid())
+  nome      String
+  produtos  Produto[]
+}
+
+model Fornecedor {
+  id        String    @id @default(uuid())
+  nome      String
+  cnpj      String?   @unique
+  telefone  String?
+  email     String?   @unique
+  endereco  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  Movimentacao Movimentacao[]
+
+  ProdutoFornecedor ProdutoFornecedor[]
+}
+
+model ProdutoFornecedor {
+  id           String   @id @default(uuid())
+  produtoId    String
+  fornecedorId String
+  precoCompra  Float?
+  produto      Produto @relation(fields: [produtoId], references: [id])
+  fornecedor   Fornecedor @relation(fields: [fornecedorId], references: [id])
+}
+
+model Movimentacao {
+  id          String    @id @default(uuid())
+  tipo        MovimentacaoTipo
+  quantidade  Int
+  produtoId   String
+  produto     Produto   @relation(fields: [produtoId], references: [id])
+  fornecedorId String?  
+  fornecedor   Fornecedor? @relation(fields: [fornecedorId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+enum MovimentacaoTipo {
+  ENTRADA
+  SAIDA
+  AJUSTE
+}
