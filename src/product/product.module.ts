@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ProductController } from './product.controller';
-import { ProductService } from './product.service';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CategoryController } from './category/category.controller';
-import { CategoryService } from './category/category.service';
+import { SupplierModule } from './supplier/supplier.module';
+import { ProductSupplierModule } from './product-supplier/product-supplier.module';
+import { MovementModule } from './movement/movement.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
-  controllers: [ProductController, CategoryController],
-  providers: [PrismaService, ProductService, CategoryService],
+  imports: [
+    CategoryModule,
+    SupplierModule,
+    ProductSupplierModule,
+    MovementModule,
+  ],
 })
 export class ProductModule {}
